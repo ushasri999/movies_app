@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import com.example.moviesapp.ui.theme.MoviesAppTheme
 
 class MainActivity : ComponentActivity() {
+    lateinit var viewModel: IMoviesViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -15,5 +17,8 @@ class MainActivity : ComponentActivity() {
                 MoviesScreen()
             }
         }
+
+        viewModel = MoviesViewModel()
+        viewModel.printMoviesData()
     }
 }
