@@ -1,4 +1,6 @@
-package com.example.moviesapp.data
+package com.example.moviesapp.data.entities
+
+import com.example.moviesapp.data.entities.Result
 
 data class MovieResponse(
     val page: Int,

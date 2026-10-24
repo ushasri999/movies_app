@@ -1,4 +1,4 @@
-package com.example.moviesapp
+package com.example.moviesapp.presentation.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

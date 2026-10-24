@@ -1,4 +1,4 @@
-package com.example.moviesapp.data
+package com.example.moviesapp.data.entities
 
 data class Result(
     val adult: Boolean,
