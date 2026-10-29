@@ -1,17 +1,15 @@
 package com.example.moviesapp.presentation
 
 import android.util.Log
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.moviesapp.presentation.IMoviesViewModel
-import com.example.moviesapp.data.repositories.api.RetrofitInstance
-import com.example.moviesapp.data.repositories.api.TmdbApiService
 import com.example.moviesapp.data.repositories.IMoviesRepository
+import com.example.moviesapp.domain.Movie
 import com.example.moviesapp.presentation.viewstate.MoviesViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -21,11 +19,17 @@ class MoviesViewModel(
 ): ViewModel(), IMoviesViewModel {
     private val _viewStateFlow: MutableStateFlow<MoviesViewState> =
         MutableStateFlow(
-            MoviesViewState()
+            MoviesViewState(
+                movies = emptyList()
+            )
         )
 
     override val viewStateFlow: StateFlow<MoviesViewState>
         get() = _viewStateFlow
+
+    init {
+        dispatchMoviesViewEvent(MoviesViewEvent.FetchMovies)
+    }
 
     class Factory(
         private val repository: IMoviesRepository
@@ -36,23 +40,38 @@ class MoviesViewModel(
         }
     }
 
-    override fun dispatchViewEvent(event: MoviesViewEvent) {
-        when (event) {
-            MoviesViewEvent.PrintPopularMovies -> printMoviesData()
+    override fun dispatchMoviesViewEvent(event: MoviesViewEvent) {
+        val updatedState = viewStateFlow.value.run {
+            when (event) {
+                MoviesViewEvent.FetchMovies -> fetchMovies()
+            }
         }
+
+        _viewStateFlow.update { updatedState }
     }
 
-    fun printMoviesData() {
+
+    fun MoviesViewState.fetchMovies(): MoviesViewState {
         viewModelScope.launch {
             try {
-                val response = repository.getPopularMovies()
-                Log.d("usha","response = $response");
-            } catch (e: HttpException) {
-                Log.e("usha", "TMDB returned HTTP ${e.code()}", e)
+                val movies = repository.getPopularMovies()
+                Log.d("usha", "movies = $movies")
+
+                _viewStateFlow.update {
+                    it.copy(
+                        isLoading = false,
+                        movies = movies
+                    )
+                }
+
             } catch (e: IOException) {
                 Log.e("usha", "Network request failed", e)
             }
         }
+
+        return copy(
+            isLoading = true
+        )
     }
 
 }

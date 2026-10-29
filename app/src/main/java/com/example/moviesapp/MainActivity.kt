@@ -26,11 +26,10 @@ class MainActivity : ComponentActivity() {
         val factory = MoviesViewModel.Factory(MoviesRepositoryApi(apiInterface))
         viewModel = ViewModelProvider(this, factory)[MoviesViewModel::class.java]
 
-        viewModel.dispatchViewEvent(MoviesViewEvent.PrintPopularMovies)
 
         setContent {
             MoviesAppTheme {
-                MoviesScreen()
+                MoviesScreen(viewModel)
             }
         }
     }

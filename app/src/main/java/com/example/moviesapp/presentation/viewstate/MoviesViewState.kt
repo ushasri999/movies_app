@@ -1,5 +1,8 @@
 package com.example.moviesapp.presentation.viewstate
 
+import com.example.moviesapp.domain.Movie
+
 data class MoviesViewState(
-    val id: Int = 0
+    val isLoading: Boolean = false,
+    val movies: List<Movie>
 )
